@@ -391,7 +391,7 @@ function MovieDetails({selectedId, onCloseMovie, onAddWatched, watched}) {
     if(!title) {
       return
     }
-    
+
     document.title = `Movie | ${title}`
   }, [title])
 
