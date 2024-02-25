@@ -395,7 +395,7 @@ function MovieDetails({selectedId, onCloseMovie, onAddWatched, watched}) {
     document.title = `Movie | ${title}`
   }, [title])
 
-  return (
+  return ( 
     <div className="details">
       {
       isLoading ? 
