@@ -57,7 +57,7 @@ const KEY = 'ef5b7d46'
 // ------------------------------------
 // App
 export default function App() {
-  const [query, setQuery] = useState("dune");
+  const [query, setQuery] = useState("");
   const [movies, setMovies] = useState([]);
   const [watched, setWatched] = useState([]);
   const [isLoading, setIsLoading] = useState(false)
@@ -99,6 +99,7 @@ export default function App() {
     setWatched((watched) => watched.filter((movie) => movie.imdbID !== id))
   }
 
+  // api fetch on user search event listener
   useEffect(function() {
     const controller = new AbortController()
 
@@ -125,9 +126,8 @@ export default function App() {
         setMovies(data.Search)
         setError('')
     } catch (err) {
-        console.error(err.message)
-
         if(err.name !== "AbortError") {
+          console.log(err.message)
           setError(err.message)
         }
       } finally {
@@ -140,6 +140,9 @@ export default function App() {
       setError('')
       return
     }
+
+    // close movie on new search
+    handleCloseMovie()
 
     fetchMovies()
 
@@ -386,6 +389,23 @@ function MovieDetails({selectedId, onCloseMovie, onAddWatched, watched}) {
     onAddWatched(newWatchedMovie)
     onCloseMovie()
   }
+  
+  // escape keypress event listener
+  useEffect(function() {
+    function callback(e) {
+      if(e.code === 'Escape') {
+        onCloseMovie()
+        console.log('CLOSING')
+      }
+    }
+
+    document.addEventListener('keydown', callback)
+
+    // removing event listener on component unmount
+    return function() {
+      document.removeEventListener('keydown', callback)
+    }
+  }, [onCloseMovie])
 
   useEffect(function() {
     async function getMovieDetails() {
@@ -410,7 +430,6 @@ function MovieDetails({selectedId, onCloseMovie, onAddWatched, watched}) {
     // cleanup function
     return function() {
       document.title = 'usePopcorn'
-      console.log(`Clean up effect for movie ${title}`)
     }
   }, [title])
 
@@ -481,8 +500,6 @@ function WatchedSummary({watched}) {
   const avgImdbRating = average(watched.map((movie) => movie.imdbRating));
   const avgUserRating = average(watched.map((movie) => movie.userRating));
   const avgRuntime = average(watched.map((movie) => movie.runtime));
-
-  console.log(avgImdbRating)
 
   return (
     <div className="summary">
