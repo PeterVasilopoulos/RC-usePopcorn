@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from "react";
 import StarRating from './StarRating'
 import {useMovies} from './useMovies'
 import { useLocalStorageState } from "./useLocalStorageState";
+import {useKey} from './useKey'
 
 const average = (arr) => {
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
@@ -139,25 +140,15 @@ function Logo() {
 function Search({query, setQuery}) {
   const inputEl = useRef(null)
 
-  useEffect(function() {
+  // using custom hook to check for user keypress
+  useKey('Enter', function() {
+    if(document.activeElement === inputEl.current) {
+      return
+    }
 
-    function callback(e) {
-      if(document.activeElement === inputEl.current) {
-        return
-      }
-
-      if(e.code === 'Enter') {
-        inputEl.current.focus()
+    inputEl.current.focus()
         setQuery('')
-      }
-    }
-
-    document.addEventListener('keydown', callback)
-
-    return function() {
-      document.removeEventListener('keydown', callback)
-    }
-  }, [setQuery])
+  })
 
   return (
     <input
@@ -310,23 +301,9 @@ function MovieDetails({selectedId, onCloseMovie, onAddWatched, watched}) {
     onAddWatched(newWatchedMovie)
     onCloseMovie()
   }
-  
-  // escape keypress event listener
-  useEffect(function() {
-    function callback(e) {
-      if(e.code === 'Escape') {
-        onCloseMovie()
-        console.log('CLOSING')
-      }
-    }
 
-    document.addEventListener('keydown', callback)
-
-    // removing event listener on component unmount
-    return function() {
-      document.removeEventListener('keydown', callback)
-    }
-  }, [onCloseMovie])
+  // custom hook for checking user keypress
+  useKey('Escape', onCloseMovie)
 
   useEffect(function() {
     async function getMovieDetails() {
