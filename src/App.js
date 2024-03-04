@@ -216,7 +216,7 @@ function Search({query, setQuery}) {
     document.addEventListener('keydown', callback)
 
     return function() {
-      document.addEventListener('keydown', callback)
+      document.removeEventListener('keydown', callback)
     }
   }, [setQuery])
 
