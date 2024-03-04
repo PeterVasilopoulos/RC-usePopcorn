@@ -2,7 +2,7 @@ import {useEffect, useState} from 'react'
 
 const KEY = 'ef5b7d46'
 
-export function useMovies(query, callback) {
+export function useMovies(query) {
     const [movies, setMovies] = useState([]);
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState('')
@@ -10,7 +10,7 @@ export function useMovies(query, callback) {
     // api fetch on user search event listener
     useEffect(function() {
         // optional chaining on callback function
-        callback?.()
+        // callback?.()
 
         const controller = new AbortController()
 
